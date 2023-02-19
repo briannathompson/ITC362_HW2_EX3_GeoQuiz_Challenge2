@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--Pg 13 Added Code-->
-<!--Pg 21 Added android:id="@id/_button" code to buttons to generate a resource ID for them-->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/question_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:padding="24dp"
-        android:text="@string/question_text" />
+        tools:text="@string/question_australia" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -30,6 +33,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/false_button" />
+
+    </LinearLayout>
+
+<!-- Created Previous Button and placed it ahead of next button so it would visually come before-->
+<!-- Copied next button code and imported an arrow_right vector drawable-->
+<!-- Created a string resource for Previous button-->
+<!-- Icon gravity is start, had to look up options but the part 2 video gave me the idea-->
+<!-- Buttons have to be in a container to align with each other: https://stackoverflow.com/questions/20791317/android-buttons-next-to-each-other#:~:text=All%20elements%20appear%20one%20above,in%20a%20horizontal%20LinearLayout%20container.-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+         <Button
+        android:id="@+id/previous_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/previous_button"
+        app:icon="@drawable/arrow_left"
+        app:iconGravity="start" />
+
+            <Button
+        android:id="@+id/next_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next_button"
+        app:icon="@drawable/arrow_right"
+        app:iconGravity="end" />
 
     </LinearLayout>
 

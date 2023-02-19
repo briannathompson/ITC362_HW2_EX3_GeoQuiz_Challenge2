@@ -3,45 +3,86 @@ package com.bignerdranch.android.geoquiz
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
+import com.bignerdranch.android.geoquiz.databinding.ActivityMainBinding // Pg40 Listing 2.7
 
 class MainActivity : AppCompatActivity() {
 
-    /* Below we use lateinit which means that it's not initialized until you use it */
-    /* lateinit is used on property declarations to indicate to the compiler that you will provide
-        a non-null View value before you try to use the contents of the property */
-    private lateinit var trueButton: Button         // Pg 22 code
-    private lateinit var falseButton: Button        // Pg 22 code
+    private lateinit var binding: ActivityMainBinding
+
+    private val questionBank = listOf(
+        Question(R.string.question_australia, true),
+        Question(R.string.question_oceans, true),
+        Question(R.string.question_mideast, false),
+        Question(R.string.question_africa, false),
+        Question(R.string.question_americas, true),
+        Question(R.string.question_asia, true))
+
+    private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        /* The following code gets a reference to an inflated view by calling Activity.findViewById(Int) */
-        trueButton = findViewById(R.id.true_button)         // Pg 22 code
-        falseButton = findViewById(R.id.false_button)       // Pg 22 code
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        /* Pg 23: Setting OnClickListeners to do something in response to the buttons being pressed */
-        // Listing 1.5 (pg 23)
-        trueButton.setOnClickListener { view: View ->
-            /* Here we're calling the static function Toast.makeText(Context, Int, Int),
-            * which creates and configures the Toast object*/
-            // Listing 1.8 (pg 25)
-            Toast.makeText(
-                this,                       // context parameter is typically an instance of Activity, we're passing the instance of MainActivity as the Context argument (this)
-                R.string.correct_toast,             // what the toast displays
-                Toast.LENGTH_SHORT                  // specifies how long the message lasts (LENGTH_SHORT or LENGTH_LONG)
-            ).show()                                // .show() makes the toast appear onscreen
+        binding.trueButton.setOnClickListener { view: View ->
+            checkAnswer(true)
         }
-        // Listing 1.6 (pg 23)
-        falseButton.setOnClickListener { view: View ->
-            // Listing 1.8 (pg 25)
-            Toast.makeText(
-                this,
-                R.string.incorrect_toast,           // what the toast displays
-                Toast.LENGTH_SHORT                  // specifies how long the message lasts (LENGTH_SHORT or LENGTH_LONG)
-            ).show()                                // .show() makes the toast appear onscreen
+        // Pg 41 Listing 2.8: Using ActivityMainBinding, added binding to the front
+        binding.falseButton.setOnClickListener { view: View ->
+            checkAnswer(false)
         }
+
+        binding.nextButton.setOnClickListener{
+            currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+
+        // Challenge 2: Create a Previous Button
+        // Copied the nextButton code and changed the current index to decrease by one
+        /* The below code was functional, but if I was on the first question (currentIndex = 0, the program would crash),
+        so I thought that if I used an if-else statement, I could avoid it and it worked!!!
+         */
+        //binding.previousButton.setOnClickListener {
+        //    currentIndex = (currentIndex - 1) % questionBank.size
+        //    updateQuestion()
+        //}
+        binding.previousButton.setOnClickListener {
+            if(currentIndex > 0){                                   // Checks if the currentIndex is more than 0
+            currentIndex = (currentIndex - 1) % questionBank.size
+            updateQuestion()
+            }
+            else{
+                currentIndex = 5 % questionBank.size                // if the currentIndex IS 0, then the currentIndex is set to 5 (there are 6 questions)
+                updateQuestion()
+            }
+        }
+
+        // Challenge 1: Set a Listener for the TextView that displays the Question (questionTextView)
+        // Copied code from the nextButton and just replaced the button with the TextView
+        binding.questionTextView.setOnClickListener{
+            currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+        }
+
+        updateQuestion()
+    }
+
+    private fun updateQuestion() {
+        val questionTextResId = questionBank[currentIndex].textResId
+        binding.questionTextView.setText(questionTextResId)
+    }
+
+    private fun checkAnswer(userAnswer: Boolean) {
+        val correctAnswer = questionBank[currentIndex].answer
+
+        val messageResId = if (userAnswer == correctAnswer) {
+            R.string.correct_toast
+        } else {
+            R.string.incorrect_toast
+        }
+
+        Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show()
     }
 }
